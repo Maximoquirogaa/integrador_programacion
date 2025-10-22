@@ -92,15 +92,11 @@ def obtener_filtros_usuario():
         "sup_min": sup_min,
         "sup_max": sup_max
     }
-    return 
+    return filtros
 
 
 def mostrar_estadisticas(archivo_csv):
-    """
-    Lee el CSV completo y calcula estadísticas clave.
-    """
-    
-    
+        
     pais_mayor_pob = ""
     mayor_pob = 0
     
@@ -145,20 +141,18 @@ def mostrar_estadisticas(archivo_csv):
                 except (ValueError, KeyError, TypeError):
                     pass
 
-        # 8. Calcular promedios (después de terminar el bucle)
         if conteo_paises > 0:
             promedio_pob = total_poblacion / conteo_paises
             promedio_sup = total_superficie / conteo_paises
 
-            # 9. Imprimir todos los resultados
             print("--- Estadísticas Globales ---")
-            # Usamos '{:,.0f}' para formatear los números con comas y sin decimales
+            
             print(f"País con Mayor Población: {pais_mayor_pob} ({mayor_pob:,.0f})")
             print(f"País con Menor Población: {pais_menor_pob} ({menor_pob:,.0f})")
             print(f"Promedio de Población: {promedio_pob:,.0f} habitantes")
             print(f"Promedio de Superficie: {promedio_sup:,.0f} km²")
             
-            print("\n--- 🌎 Conteo de Países por Continente ---")
+            print("\n---  Conteo de Países por Continente ---")
             # Ordenamos el diccionario alfabéticamente por continente
             for continente, cantidad in sorted(conteo_continentes.items()):
                 print(f" - {continente}: {cantidad} países")
@@ -172,17 +166,14 @@ def mostrar_estadisticas(archivo_csv):
 
 def filtro():
 
-    # --- 1. Definir archivos ---
     archivo_entrada = "paises_info_espanol.csv"
     archivo_salida = "filtrado_de_paises.csv"
     paises_encontrados = 0  
 
-    # --- 2. Obtener los filtros ---
+
     filtros = obtener_filtros_usuario()
 
-    # --- 3. Procesar el archivo ---
     try:
-        # (Añadido newline='' como buena práctica)
         with open(archivo_entrada, mode='r', encoding="utf-8", newline='') as archivo_lectura:
             with open(archivo_salida, mode='w', encoding="utf-8", newline='') as archivo_escritura:
                 
@@ -201,20 +192,18 @@ def filtro():
                 print(f"  Superficie = {filtros['sup_min']} a {filtros['sup_max']}")
                 print("---------------------------------")
 
-                # --- INICIA EL BUCLE FOR ---
                 for fila in lector_csv:
-                    poblacion_int = int(fila['población'])
-                    superficie_int = int(fila['superficie'])
-                    continente_str = fila['continente']
-                    
-                    filtro_continente = continente_str == filtros['continente']
-                    filtro_poblacion = (poblacion_int >= filtros['pob_min']) and (poblacion_int <= filtros['pob_max'])
-                    filtro_superficie = (superficie_int >= filtros['sup_min']) and (superficie_int <= filtros['sup_max'])
+                        poblacion_int = int(fila['población'])
+                        superficie_int = int(fila['superficie'])
+                        continente_str = fila['continente']
+                        
+                        filtro_continente = continente_str == filtros['continente']
+                        filtro_poblacion = (poblacion_int >= filtros['pob_min']) and (poblacion_int <= filtros['pob_max'])
+                        filtro_superficie = (superficie_int >= filtros['sup_min']) and (superficie_int <= filtros['sup_max'])
 
-                    if filtro_continente and filtro_poblacion and filtro_superficie:
-                        escritor_csv.writerow(fila)
-                        paises_encontrados += 1
-                            
+                        if filtro_continente and filtro_poblacion and filtro_superficie:
+                            escritor_csv.writerow(fila)
+                            paises_encontrados += 1
                 
                 print(f"\nFiltrado completado.")
                 if paises_encontrados == 0:
