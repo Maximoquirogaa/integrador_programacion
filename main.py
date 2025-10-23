@@ -18,8 +18,9 @@ if __name__=="__main__":
         match opcion:
             
             case "1":
-                busqueda=input("Ingrese el pais a buscar: ").title()
-                funciones.BusquedaPais(busqueda)
+                while True:
+                    busqueda=input("Ingrese el pais a buscar: ")
+                    if funciones.BusquedaPais(busqueda)!=0:break
 
             case "2":
                 funciones.filtro()
@@ -33,8 +34,8 @@ if __name__=="__main__":
     """)
                 match opcion_m:
                     case "1":
-                        print("Ordenando por Nombre: ")
-                        funciones.OrdenarPorNombre()
+                        print("\nOrdenando por Nombre:")
+                        funciones.Ordenar("nombre")
                     case "2":
                         print("Ordenando por Población: ")
                         funciones.Ordenar("poblacion")

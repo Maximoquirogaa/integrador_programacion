@@ -1,29 +1,33 @@
-import csv
-import math 
+import csv, math, unicodedata
+
+
+def quitar_tildes(texto):
+    texto = unicodedata.normalize('NFD', texto)
+    texto = ''.join(c for c in texto if unicodedata.category(c) != 'Mn')
+    return texto
+
 
 def BusquedaPais(busqueda):
-    encontrado=False
+    # Prevenimos que no se ingresen números
+    if any(c.isdigit() for c in busqueda):
+        print("\nPor favor no ingrese números.\n")
+        return 0
+
+    # Normalizamos la búsqueda (quitamos tildes y pasamos a minúsculas)
+    busqueda_normalizada = quitar_tildes(busqueda.lower())
+
+    encontrado = False
     with open("paises_info_espanol.csv", "r", encoding="utf-8") as archivo:
         for linea in archivo:
-            if busqueda in linea:
+            linea_normalizada = quitar_tildes(linea.lower())
+            if busqueda_normalizada in linea_normalizada:
                 partes = linea.strip().split(",")
-                print(f"\nPais encontrado: {partes[0]}\nPoblación: {partes[1]}\nSuperficie: {partes[2]}\nContinente: {partes[3]}")
-                encontrado=True
-        if not encontrado:
-            print("No se encontro ningun pais.")
+                print(f"\nPaís encontrado: {partes[0]}\nPoblación: {partes[1]}\nSuperficie: {partes[2]}\nContinente: {partes[3]}")
+                encontrado = True
 
-def OrdenarPorNombre():
-    nombres=[]
-    with open("paises_info_espanol.csv", "r", encoding="utf-8") as archivo:
-        for linea in archivo:
-            partes = linea.strip().split(",")
-            nombres.append(partes[0])
-        
-        #Odernar alfabeticamente ignorando mayusculas y minusculas
-        nombres.sort(key=str.lower)
+    if not encontrado:
+        print("No se encontró ningún país.")
 
-        for i in nombres:
-            print(i)
 
 def Ordenar(tipo):
     if tipo=="poblacion":
@@ -34,24 +38,36 @@ def Ordenar(tipo):
 
     with open("paises_info_espanol.csv", "r", encoding="utf-8") as archivo:
         next(archivo)  # Saltar encabezado
-
         for linea in archivo:
-            partes = linea.strip().split(",")
+            partes = linea.strip().split(",") #Cada linea se convierte en una lista con sus respectivos elementos sin espacios.
             try:
-                nombre = partes[0]
-                valor = int(partes[parte])
-                paises.append((nombre, valor))
+                if tipo!="nombre":
+                    nombre = partes[0]
+                    valor = int(partes[parte])
+                    paises.append((nombre, valor))
+                else:
+                    nombre = partes[0]
+                    poblacion = int(partes[1])
+                    superficie = int(partes[2])
+                    continente = partes[3]
+                    paises.append((nombre, poblacion, superficie, continente))
+            
             except ValueError:
                 print(f"Error con la línea: {linea}")
-    if tipo=="superficie_d" or tipo=="poblacion":
-        # Ordenar por valor de mayor a menor
-        paises_ordenados = sorted(paises, key=lambda x: x[1], reverse=True)
-    else:
-        paises_ordenados = sorted(paises, key=lambda x: x[1], reverse=False)
 
-    # Imprimir cada país con su valor
-    for nombre, valor in paises_ordenados:
-        print(f"{nombre}: {valor}")
+    if tipo=="superficie_d" or tipo=="poblacion":   
+        paises_ordenados = sorted(paises, key=lambda x: x[1], reverse=True)# Ordenar por valor de menor a mayor
+    else:
+        paises_ordenados = sorted(paises, key=lambda x: x[1], reverse=False)# Ordenar por valor de mayor a menor
+
+    if tipo=="nombre": # Imprimir cada país con todos sus datos
+        paises_ordenados = sorted(paises, key=lambda x: x[0], reverse=False)# Ordenar por nombre alfabeticamente
+        for nombre, poblacion, superficie, continente in paises_ordenados:
+            print(f"\n{nombre}: |  Poblacion: {poblacion} | Superficie: {superficie} | Continente: {continente}")
+    
+    else:# Imprimir cada país con su valor
+        for nombre, valor in paises_ordenados:
+            print(f"{nombre}: {valor}")
 
 
 
