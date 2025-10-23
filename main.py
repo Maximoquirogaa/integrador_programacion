@@ -1,5 +1,5 @@
-import os
-import funciones
+import os,funciones
+
 if __name__=="__main__":
     # Cambiar el directorio actual al del script
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
