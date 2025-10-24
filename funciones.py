@@ -30,7 +30,9 @@ def BusquedaPais(busqueda):
 
 
 def Ordenar(tipo):
-    if tipo=="poblacion":
+    if tipo=="nombre":
+        parte=0
+    elif tipo=="poblacion":
         parte=1
     elif tipo=="superficie_a" or tipo=="superficie_d":
         parte=2
@@ -41,33 +43,22 @@ def Ordenar(tipo):
         for linea in archivo:
             partes = linea.strip().split(",") #Cada linea se convierte en una lista con sus respectivos elementos sin espacios.
             try:
-                if tipo!="nombre":
-                    nombre = partes[0]
-                    valor = int(partes[parte])
-                    paises.append((nombre, valor))
-                else:
-                    nombre = partes[0]
-                    poblacion = int(partes[1])
-                    superficie = int(partes[2])
-                    continente = partes[3]
-                    paises.append((nombre, poblacion, superficie, continente))
+                nombre = partes[0]
+                poblacion = int(partes[1])
+                superficie = int(partes[2])
+                continente = partes[3]
+                paises.append((nombre, poblacion, superficie, continente))
             
             except ValueError:
                 print(f"Error con la línea: {linea}")
 
     if tipo=="superficie_d" or tipo=="poblacion":   
-        paises_ordenados = sorted(paises, key=lambda x: x[1], reverse=True)# Ordenar por valor de menor a mayor
+        paises_ordenados = sorted(paises, key=lambda x: x[parte], reverse=True)# Ordenar por valor de mayor a menor
     else:
-        paises_ordenados = sorted(paises, key=lambda x: x[1], reverse=False)# Ordenar por valor de mayor a menor
+        paises_ordenados = sorted(paises, key=lambda x: x[parte], reverse=False)# Ordenar por valor de menor a mayor
 
-    if tipo=="nombre": # Imprimir cada país con todos sus datos
-        paises_ordenados = sorted(paises, key=lambda x: x[0], reverse=False)# Ordenar por nombre alfabeticamente
-        for nombre, poblacion, superficie, continente in paises_ordenados:
-            print(f"\n{nombre}: |  Poblacion: {poblacion} | Superficie: {superficie} | Continente: {continente}")
-    
-    else:# Imprimir cada país con su valor
-        for nombre, valor in paises_ordenados:
-            print(f"{nombre}: {valor}")
+    for nombre, poblacion, superficie, continente in paises_ordenados:
+        print(f"\n{nombre}: |  Poblacion: {poblacion} | Superficie: {superficie} | Continente: {continente}")
 
 
 
@@ -186,7 +177,6 @@ def filtro():
     archivo_salida = "filtrado_de_paises.csv"
     paises_encontrados = 0  
 
-
     filtros = obtener_filtros_usuario()
 
     try:
@@ -208,18 +198,21 @@ def filtro():
                 print(f"  Superficie = {filtros['sup_min']} a {filtros['sup_max']}")
                 print("---------------------------------")
 
-                for fila in lector_csv:
-                        poblacion_int = int(fila['población'])
-                        superficie_int = int(fila['superficie'])
-                        continente_str = fila['continente']
-                        
-                        filtro_continente = continente_str == filtros['continente']
-                        filtro_poblacion = (poblacion_int >= filtros['pob_min']) and (poblacion_int <= filtros['pob_max'])
-                        filtro_superficie = (superficie_int >= filtros['sup_min']) and (superficie_int <= filtros['sup_max'])
+                # Normalizamos el continente ingresado por el usuario
+                continente_usuario = quitar_tildes(filtros['continente'].lower())
 
-                        if filtro_continente and filtro_poblacion and filtro_superficie:
-                            escritor_csv.writerow(fila)
-                            paises_encontrados += 1
+                for fila in lector_csv:
+                    poblacion_int = int(fila['población'])
+                    superficie_int = int(fila['superficie'])
+                    continente_fila = quitar_tildes(fila['continente'].lower())
+
+                    filtro_continente = continente_fila == continente_usuario
+                    filtro_poblacion = (poblacion_int >= filtros['pob_min']) and (poblacion_int <= filtros['pob_max'])
+                    filtro_superficie = (superficie_int >= filtros['sup_min']) and (superficie_int <= filtros['sup_max'])
+
+                    if filtro_continente and filtro_poblacion and filtro_superficie:
+                        escritor_csv.writerow(fila)
+                        paises_encontrados += 1
                 
                 print(f"\nFiltrado completado.")
                 if paises_encontrados == 0:

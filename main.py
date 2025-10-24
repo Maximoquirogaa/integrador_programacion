@@ -26,31 +26,35 @@ if __name__=="__main__":
                 funciones.filtro()
 
             case "3":
-                opcion_m=input("""
+                while True:
+                    opcion_m=input("""
     Ordenar por:
     1. Nombre
     2. Población -
     3. Superficie
     """)
-                match opcion_m:
-                    case "1":
-                        print("\nOrdenando por Nombre:")
-                        funciones.Ordenar("nombre")
-                    case "2":
-                        print("Ordenando por Población: ")
-                        funciones.Ordenar("poblacion")
-                    case "3":
-                        opcion_k=input(""" 
+                    match opcion_m:
+                        case "1":
+                            print("\nOrdenando por Nombre:")
+                            funciones.Ordenar("nombre");break
+                        case "2":
+                            print("Ordenando por Población: ")
+                            funciones.Ordenar("poblacion");break
+                        case "3":
+                            while True:
+                                opcion_k=input(""" 
     1. Ascendente
     2. Descendiente
     """)
-                        if opcion_k=="1":
-                            print("Ordenando por Superficie (Ascendente)")
-                            funciones.Ordenar("superficie_a")
-                        else:
-                            print("Ordenando por Superficie (Descendiente)")
-                            funciones.Ordenar("superficie_d")
-
+                                if opcion_k=="1":
+                                    print("Ordenando por Superficie (Ascendente)")
+                                    funciones.Ordenar("superficie_a");break
+                                elif opcion_k=="2":
+                                    print("Ordenando por Superficie (Descendente)")
+                                    funciones.Ordenar("superficie_d");break
+                                else: print("Opcion invalida")
+                        case _: print("\nOpcion invalida");continue
+                    break
             case "4":
                 with open("paises_info_espanol.csv", "r", encoding="utf-8") as archivo:
                     funciones.mostrar_estadisticas("paises_info_espanol.csv")
