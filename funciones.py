@@ -78,12 +78,18 @@ def obtener_filtros_usuario():
 
     print("\nPASO 1: Continente")
     while True:
-        continente_input = input("Ingrese el nombre del continente (ej: América): ")
+        continente_input = input("Ingrese el nombre del continente (ej: América): ").strip()
         if any(c.isdigit() for c in continente_input):
             print("\nPor favor no ingrese números.\n")
-        else:break
-        
-    continente = continente_input.capitalize()
+            continue
+        if continente_input == "":
+            print("\nPor favor ingrese un nombre de continente válido.\n")
+            continue
+        break
+
+    # Versión para mostrar (capitalizada) y versión normalizada (sin tildes, en minúsculas) para comparar
+    continente_display = continente_input.capitalize()
+    continente_norm = quitar_tildes(continente_input.lower())
 
     print("\nPASO 2: Rango de Población ")
     print("A continuación, ingrese el rango de población (solo números).")
@@ -98,13 +104,17 @@ def obtener_filtros_usuario():
     print(f"Rango de superficie establecido: {sup_min} km² a {sup_max} km²")
 
     filtros = {
-        "continente": continente,
+        # 'continente' se usa para mostrar al usuario
+        "continente": continente_display,
+        # 'continente_norm' se usa internamente para comparar sin tildes ni mayúsculas
+        "continente_norm": continente_norm,
         "pob_min": pob_min,
         "pob_max": pob_max,
         "sup_min": sup_min,
         "sup_max": sup_max
     }
     return filtros
+
 
 
 
@@ -246,6 +256,7 @@ def filtro(filtros_dict):
     
     print(f"\n--- 2. Iniciando búsqueda... ---")
     print(f"Buscando con los siguientes criterios:")
+    # mostramos la versión para display
     print(f"  Continente = {filtros_dict['continente']}")
     print(f"  Población = {filtros_dict['pob_min']} a {filtros_dict['pob_max']}")
     print(f"  Superficie = {filtros_dict['sup_min']} a {filtros_dict['sup_max']}")
@@ -266,14 +277,19 @@ def filtro(filtros_dict):
                 try:
                     poblacion_int = int(fila['población'])
                     superficie_int = int(fila['superficie'])
-                    continente_str = fila['continente']
-                    
-                    filtro_continente = continente_str == filtros_dict['continente']
+                    continente_str = fila.get('continente', '').strip()
+
+                    # normalizamos el continente leído del CSV para comparar
+                    continente_csv_norm = quitar_tildes(continente_str.lower())
+
+                    # comparamos con la versión normalizada que guardamos en filtros_dict
+                    filtro_continente = (continente_csv_norm == filtros_dict.get('continente_norm', '').lower())
+
                     filtro_poblacion = (poblacion_int >= filtros_dict['pob_min']) and (poblacion_int <= filtros_dict['pob_max'])
                     filtro_superficie = (superficie_int >= filtros_dict['sup_min']) and (superficie_int <= filtros_dict['sup_max'])
 
                     if filtro_continente and filtro_poblacion and filtro_superficie:
-                        print(f"  - Nombre: {fila['nombre']}, Población: {fila['población']}, Superficie: {fila['superficie']}")
+                        print(f"  - Nombre: {fila['nombre']}   |   Población: {fila['población']}  |  Superficie: {fila['superficie']}")
                         paises_encontrados += 1
                         
                 except (ValueError, KeyError) as e:
@@ -292,3 +308,4 @@ def filtro(filtros_dict):
         print(f"Error CRÍTICO: No se encontró el archivo csv")
     except Exception as e:
         print(f"Ocurrió un error inesperado en el filtrado: {e}")
+
