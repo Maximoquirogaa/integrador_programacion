@@ -86,7 +86,6 @@ def obtener_filtros_usuario():
             print("\nPor favor ingrese un nombre de continente válido.\n")
             continue
         break
-
     # Versión para mostrar (capitalizada) y versión normalizada (sin tildes, en minúsculas) para comparar
     continente_display = continente_input.capitalize()
     continente_norm = quitar_tildes(continente_input.lower())
@@ -119,10 +118,6 @@ def obtener_filtros_usuario():
 
 
 def _leer_datos_estadisticas(archivo_csv):
-    """
-    Función interna para leer el CSV y devolver una lista de datos limpios.
-    Contiene su propio try-except para la lectura del archivo.
-    """
     datos_limpios = []
     try:
         with open(archivo_csv, mode='r', encoding='utf-8', newline='') as f:
@@ -278,20 +273,15 @@ def filtro(filtros_dict):
                     poblacion_int = int(fila['población'])
                     superficie_int = int(fila['superficie'])
                     continente_str = fila.get('continente', '').strip()
-
                     # normalizamos el continente leído del CSV para comparar
                     continente_csv_norm = quitar_tildes(continente_str.lower())
-
                     # comparamos con la versión normalizada que guardamos en filtros_dict
                     filtro_continente = (continente_csv_norm == filtros_dict.get('continente_norm', '').lower())
-
                     filtro_poblacion = (poblacion_int >= filtros_dict['pob_min']) and (poblacion_int <= filtros_dict['pob_max'])
                     filtro_superficie = (superficie_int >= filtros_dict['sup_min']) and (superficie_int <= filtros_dict['sup_max'])
-
                     if filtro_continente and filtro_poblacion and filtro_superficie:
                         print(f"  - Nombre: {fila['nombre']}   |   Población: {fila['población']}  |  Superficie: {fila['superficie']}")
-                        paises_encontrados += 1
-                        
+                        paises_encontrados += 1   
                 except (ValueError, KeyError) as e:
                     nombre_pais = fila.get('nombre', 'DESCONOCIDO')
                     print(f"Error en fila: Fila ignorada (país: {nombre_pais}). Error: {e}")
