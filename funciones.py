@@ -102,74 +102,138 @@ def obtener_filtros_usuario():
     return filtros
 
 
-def mostrar_estadisticas(archivo_csv):
-        
-    pais_mayor_pob = ""
-    mayor_pob = 0
-    
-    pais_menor_pob = ""
-    menor_pob = math.inf  
-    
-    total_poblacion = 0
-    total_superficie = 0
-    conteo_paises = 0
-    conteo_continentes = {}  
 
-    print("\n---  Iniciando Análisis Estadístico ---")
-    
+def _leer_datos_estadisticas(archivo_csv):
+    """
+    Función interna para leer el CSV y devolver una lista de datos limpios.
+    Contiene su propio try-except para la lectura del archivo.
+    """
+    datos_limpios = []
     try:
         with open(archivo_csv, mode='r', encoding='utf-8', newline='') as f:
             lector = csv.DictReader(f)
 
             if not lector.fieldnames:
-                print(f"Error: El archivo '{archivo_csv}' está vacío.")
-                return  
+                print(f"Error (Estadísticas): El archivo '{archivo_csv}' está vacío.")
+                return None  # Devuelve None si el archivo está vacío
+
             for fila in lector:
                 try:
-                    poblacion_int = int(fila['población'])
-                    superficie_int = int(fila['superficie'])
-                    nombre_pais = fila['nombre']
-                    continente = fila['continente']
-
-                    total_poblacion += poblacion_int
-                    total_superficie += superficie_int
-                    conteo_paises += 1
-
-                    if poblacion_int > mayor_pob:
-                        mayor_pob = poblacion_int
-                        pais_mayor_pob = nombre_pais
-
-                    if poblacion_int < menor_pob:
-                        menor_pob = poblacion_int
-                        pais_menor_pob = nombre_pais
-
-                    conteo_continentes[continente] = conteo_continentes.get(continente, 0) + 1
-
+                    # Intenta convertir los datos de esta fila
+                    datos_limpios.append({
+                        "nombre": fila['nombre'],
+                        "poblacion": int(fila['población']),
+                        "superficie": int(fila['superficie']),
+                        "continente": fila['continente']
+                    })
                 except (ValueError, KeyError, TypeError):
-                    pass
-
-        if conteo_paises > 0:
-            promedio_pob = total_poblacion / conteo_paises
-            promedio_sup = total_superficie / conteo_paises
-
-            print("--- Estadísticas Globales ---")
+                    # Si una fila tiene datos malos (ej: 'N/A'), la ignora
+                    pass 
             
-            print(f"País con Mayor Población: {pais_mayor_pob} ({mayor_pob:,.0f})")
-            print(f"País con Menor Población: {pais_menor_pob} ({menor_pob:,.0f})")
-            print(f"Promedio de Población: {promedio_pob:,.0f} habitantes")
-            print(f"Promedio de Superficie: {promedio_sup:,.0f} km²")
-            
-            print("\n---  Conteo de Países por Continente ---")
-            # Ordenamos el diccionario alfabéticamente por continente
-            for continente, cantidad in sorted(conteo_continentes.items()):
-                print(f" - {continente}: {cantidad} países")
-        else:
-            print("No se encontraron datos válidos para calcular estadísticas.")
+            if not datos_limpios:
+                print("No se encontraron datos válidos para calcular estadísticas.")
+                return None
+
+            return datos_limpios
 
     except FileNotFoundError:
-        print(f"Error CRÍTICO: No se encontró el archivo '{archivo_csv}'")
+        print(f"Error CRÍTICO: No se encontró el archivo de estadísticas '{archivo_csv}'")
+        return None  # Devuelve None si el archivo no se encuentra
     except Exception as e:
-        print(f"Ocurrió un error inesperado durante las estadísticas: {e}")
+        print(f"Ocurrió un error inesperado al leer los datos: {e}")
+        return None
+
+def calcular_extremos_poblacion(datos):
+    """Calcula y muestra el país con mayor y menor población."""
+    try:
+        # Usamos 'max' y 'min' con una 'key' para encontrar el país (diccionario)
+        pais_mayor_pob = max(datos, key=lambda p: p['poblacion'])
+        pais_menor_pob = min(datos, key=lambda p: p['poblacion'])
+        
+        print("\n--- 📈 Extremos de Población ---")
+        print(f"País con Mayor Población: {pais_mayor_pob['nombre']} ({pais_mayor_pob['poblacion']:,.0f})")
+        print(f"País con Menor Población: {pais_menor_pob['nombre']} ({pais_menor_pob['poblacion']:,.0f})")
+    except Exception as e:
+        print(f"Error al calcular extremos de población: {e}")
+
+def calcular_promedios(datos):
+    """Calcula y muestra los promedios de población y superficie."""
+    try:
+        # Usamos generadores para sumar las columnas
+        total_poblacion = sum(p['poblacion'] for p in datos)
+        total_superficie = sum(p['superficie'] for p in datos)
+        conteo = len(datos)
+
+        promedio_pob = total_poblacion / conteo
+        promedio_sup = total_superficie / conteo
+        
+        print("\n--- 📊 Promedios ---")
+        print(f"Promedio de Población: {promedio_pob:,.0f} habitantes")
+        print(f"Promedio de Superficie: {promedio_sup:,.0f} km²")
+    except ZeroDivisionError:
+        print("Error: No se puede dividir por cero (no hay datos).")
+    except Exception as e:
+        print(f"Error al calcular promedios: {e}")
+
+def contar_paises_por_continente(datos):
+    """Cuenta y muestra cuántos países hay por continente."""
+    try:
+        conteo_continentes = {}
+        for pais in datos:
+            continente = pais['continente']
+            conteo_continentes[continente] = conteo_continentes.get(continente, 0) + 1
+        
+        print("\n--- 🌎 Conteo de Países por Continente ---")
+        # Ordenamos por nombre de continente
+        for continente, cantidad in sorted(conteo_continentes.items()):
+            print(f" - {continente}: {cantidad} países")
+    except Exception as e:
+        print(f"Error al contar países por continente: {e}")
+
+
+def menu_estadisticas(archivo_csv):
+    """
+    Función principal que muestra el menú de estadísticas.
+    Reemplaza a la antigua 'mostrar_estadisticas'.
+    """
+    print("\n--- 📊 Módulo de Estadísticas ---")
+    
+    # 1. Cargar los datos UNA SOLA VEZ
+    datos = _leer_datos_estadisticas(archivo_csv)
+    
+    # Si la carga de datos falló, no continuamos
+    if datos is None:
+        print("No se pueden mostrar las estadísticas.")
+        return
+
+    # 2. Bucle del Menú
+    while True:
+        print("\n¿Qué estadística deseas consultar?")
+        print("  1. País con mayor y menor población")
+        print("  2. Promedio de población y superficie")
+        print("  3. Cantidad de países por continente")
+        print("  4. Mostrar TODAS las estadísticas")
+        print("  5. Salir del módulo de estadísticas")
+        
+        opcion = input("Elige una opción (1-5): ")
+        
+        if opcion == '1':
+            calcular_extremos_poblacion(datos)
+        elif opcion == '2':
+            calcular_promedios(datos)
+        elif opcion == '3':
+            contar_paises_por_continente(datos)
+        elif opcion == '4':
+            # Llama a las tres funciones
+            print("\n--- Mostrando todas las estadísticas ---")
+            calcular_extremos_poblacion(datos)
+            calcular_promedios(datos)
+            contar_paises_por_continente(datos)
+        elif opcion == '5':
+            print("Saliendo del módulo de estadísticas...")
+            break  # Rompe el bucle while y termina la función
+        else:
+            print("Error: Opción no válida. Por favor, elige un número entre 1 y 5.")
 
 def filtro():
 
