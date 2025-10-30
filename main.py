@@ -23,7 +23,8 @@ if __name__=="__main__":
                     if funciones.BusquedaPais(busqueda)!=0:break
 
             case "2":
-                funciones.filtro()
+                filtrado = funciones.obtener_filtros_usuario()
+                funciones.filtro(filtrado)
 
             case "3":
                 while True:

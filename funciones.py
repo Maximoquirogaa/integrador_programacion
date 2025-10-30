@@ -240,57 +240,55 @@ def menu_estadisticas(archivo_csv):
         else:
             print("Error: Opción no válida. Por favor, elige un número entre 1 y 5.")
 
-def filtro():
+def filtro(filtros_dict):
 
-    archivo_entrada = "paises_info_espanol.csv"
-    archivo_salida = "filtrado_de_paises.csv"
-    paises_encontrados = 0  
-
-    filtros = obtener_filtros_usuario()
-
+    paises_encontrados = 0
+    
+    print(f"\n--- 2. Iniciando búsqueda... ---")
+    print(f"Buscando con los siguientes criterios:")
+    print(f"  Continente = {filtros_dict['continente']}")
+    print(f"  Población = {filtros_dict['pob_min']} a {filtros_dict['pob_max']}")
+    print(f"  Superficie = {filtros_dict['sup_min']} a {filtros_dict['sup_max']}")
+    print("---------------------------------")
+    
+    print("\n--- Países Encontrados ---")
+        
     try:
-        with open(archivo_entrada, mode='r', encoding="utf-8", newline='') as archivo_lectura:
-            with open(archivo_salida, mode='w', encoding="utf-8", newline='') as archivo_escritura:
-                
-                lector_csv = csv.DictReader(archivo_lectura)
-                
-                if not lector_csv.fieldnames:
-                    print(f"Error: El archivo '{archivo_entrada}' está vacío.")
-                    exit()
+        with open("paises_info_espanol.csv", mode='r', encoding="utf-8", newline='') as archivo_lectura:
+            
+            lector_csv = csv.DictReader(archivo_lectura)
+            
+            if not lector_csv.fieldnames:
+                 print(f"Error: El archivo csv está vacío.")
+                 return # Salir de la función
 
-                escritor_csv = csv.DictWriter(archivo_escritura, fieldnames=lector_csv.fieldnames)
-                escritor_csv.writeheader()
-                
-                print(f"\n--- 2. Iniciando filtrado... ---")
-                print(f"  Continente = {filtros['continente']}")
-                print(f"  Población = {filtros['pob_min']} a {filtros['pob_max']}")
-                print(f"  Superficie = {filtros['sup_min']} a {filtros['sup_max']}")
-                print("---------------------------------")
-
-                # Normalizamos el continente ingresado por el usuario
-                continente_usuario = quitar_tildes(filtros['continente'].lower())
-
-                for fila in lector_csv:
+            for fila in lector_csv:
+                try:
                     poblacion_int = int(fila['población'])
                     superficie_int = int(fila['superficie'])
-                    continente_fila = quitar_tildes(fila['continente'].lower())
-
-                    filtro_continente = continente_fila == continente_usuario
-                    filtro_poblacion = (poblacion_int >= filtros['pob_min']) and (poblacion_int <= filtros['pob_max'])
-                    filtro_superficie = (superficie_int >= filtros['sup_min']) and (superficie_int <= filtros['sup_max'])
+                    continente_str = fila['continente']
+                    
+                    filtro_continente = continente_str == filtros_dict['continente']
+                    filtro_poblacion = (poblacion_int >= filtros_dict['pob_min']) and (poblacion_int <= filtros_dict['pob_max'])
+                    filtro_superficie = (superficie_int >= filtros_dict['sup_min']) and (superficie_int <= filtros_dict['sup_max'])
 
                     if filtro_continente and filtro_poblacion and filtro_superficie:
-                        escritor_csv.writerow(fila)
+                        print(f"  - Nombre: {fila['nombre']}, Población: {fila['población']}, Superficie: {fila['superficie']}")
                         paises_encontrados += 1
-                
-                print(f"\nFiltrado completado.")
-                if paises_encontrados == 0:
-                    print(">> No se encontraron países que coincidan con todos los criterios.")
-                else:
-                    print(f">> Se encontraron {paises_encontrados} países que coinciden.")
-                    print(f"Resultados guardados en '{archivo_salida}'.")
+                        
+                except (ValueError, KeyError) as e:
+                    nombre_pais = fila.get('nombre', 'DESCONOCIDO')
+                    print(f"Error en fila: Fila ignorada (país: {nombre_pais}). Error: {e}")
+            
+            # --- TERMINÓ EL BUCLE FOR ---
+            print("------------------------------")
+            print(f"\nBúsqueda completada.")
+            if paises_encontrados == 0:
+                print(">> No se encontraron países que coincidan con todos los criterios.")
+            else:
+                print(f">> Se encontraron y mostraron {paises_encontrados} países.")
 
     except FileNotFoundError:
-        print(f"Error CRÍTICO: No se encontró el archivo '{archivo_entrada}'")
+        print(f"Error CRÍTICO: No se encontró el archivo csv")
     except Exception as e:
-        print(f"Ocurrió un error inesperado: {e}")
+        print(f"Ocurrió un error inesperado en el filtrado: {e}")
