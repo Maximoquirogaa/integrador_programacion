@@ -1,7 +1,7 @@
 import csv, math, unicodedata
 
 
-def quitar_tildes(texto):
+def quitar_tildes(texto): #Funcion para quitar tildes de los inputs
     texto = unicodedata.normalize('NFD', texto)
     texto = ''.join(c for c in texto if unicodedata.category(c) != 'Mn')
     return texto
@@ -19,7 +19,7 @@ def BusquedaPais(busqueda):
     encontrado = False
     with open("paises_info_espanol.csv", "r", encoding="utf-8") as archivo:
         for linea in archivo:
-            linea_normalizada = quitar_tildes(linea.lower())
+            linea_normalizada = quitar_tildes(linea.lower()) #Por cada linea en el archivo, la normalizamos y metemos en una lista.
             if busqueda_normalizada in linea_normalizada:
                 partes = linea.strip().split(",")
                 print(f"\nPaís encontrado: {partes[0]}\nPoblación: {partes[1]}\nSuperficie: {partes[2]}\nContinente: {partes[3]}")
@@ -44,8 +44,8 @@ def Ordenar(tipo):
             partes = linea.strip().split(",") #Cada linea se convierte en una lista con sus respectivos elementos sin espacios.
             try:
                 nombre = partes[0]
-                poblacion = int(partes[1])
-                superficie = int(partes[2])
+                poblacion = int(partes[1]) #Partes[1] corresponde a el valor de poblacion en la lista
+                superficie = int(partes[2]) #Partes[2] corresponde a el valor de superficie en la lista
                 continente = partes[3]
                 paises.append((nombre, poblacion, superficie, continente))
             
@@ -61,7 +61,6 @@ def Ordenar(tipo):
         print(f"\n{nombre}: |  Poblacion: {poblacion} | Superficie: {superficie} | Continente: {continente}")
 
 
-
 def pedir_numero(mensaje):
 
     while True:
@@ -71,6 +70,7 @@ def pedir_numero(mensaje):
             return valor_int
         except ValueError:
             print("  Error: Ingrese solo números, sin puntos ni comas.")
+
 
 def obtener_filtros_usuario():
 
@@ -116,8 +116,6 @@ def obtener_filtros_usuario():
     return filtros
 
 
-
-
 def _leer_datos_estadisticas(archivo_csv):
     """
     Función interna para leer el CSV y devolver una lista de datos limpios.
@@ -158,6 +156,7 @@ def _leer_datos_estadisticas(archivo_csv):
         print(f"Ocurrió un error inesperado al leer los datos: {e}")
         return None
 
+
 def calcular_extremos_poblacion(datos):
     """Calcula y muestra el país con mayor y menor población."""
     try:
@@ -170,6 +169,7 @@ def calcular_extremos_poblacion(datos):
         print(f"País con Menor Población: {pais_menor_pob['nombre']} ({pais_menor_pob['poblacion']:,.0f})")
     except Exception as e:
         print(f"Error al calcular extremos de población: {e}")
+
 
 def calcular_promedios(datos):
     """Calcula y muestra los promedios de población y superficie."""
@@ -189,6 +189,7 @@ def calcular_promedios(datos):
         print("Error: No se puede dividir por cero (no hay datos).")
     except Exception as e:
         print(f"Error al calcular promedios: {e}")
+
 
 def contar_paises_por_continente(datos):
     """Cuenta y muestra cuántos países hay por continente."""
@@ -250,6 +251,7 @@ def menu_estadisticas(archivo_csv):
         else:
             print("Error: Opción no válida. Por favor, elige un número entre 1 y 5.")
 
+
 def filtro(filtros_dict):
 
     paises_encontrados = 0
@@ -308,4 +310,3 @@ def filtro(filtros_dict):
         print(f"Error CRÍTICO: No se encontró el archivo csv")
     except Exception as e:
         print(f"Ocurrió un error inesperado en el filtrado: {e}")
-
