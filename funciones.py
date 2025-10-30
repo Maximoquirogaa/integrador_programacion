@@ -77,7 +77,12 @@ def obtener_filtros_usuario():
     print("--- 1. Configuración de Filtros ---")
 
     print("\nPASO 1: Continente")
-    continente_input = input("Ingrese el nombre del continente (ej: América): ")
+    while True:
+        continente_input = input("Ingrese el nombre del continente (ej: América): ")
+        if any(c.isdigit() for c in continente_input):
+            print("\nPor favor no ingrese números.\n")
+        else:break
+        
     continente = continente_input.capitalize()
 
     print("\nPASO 2: Rango de Población ")

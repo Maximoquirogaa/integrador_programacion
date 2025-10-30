@@ -37,9 +37,11 @@ if __name__=="__main__":
                         case "1":
                             print("\nOrdenando por Nombre:")
                             funciones.Ordenar("nombre");break
+                        
                         case "2":
                             print("Ordenando por Población: ")
                             funciones.Ordenar("poblacion");break
+                        
                         case "3":
                             while True:
                                 opcion_k=input(""" 
@@ -53,8 +55,11 @@ if __name__=="__main__":
                                     print("Ordenando por Superficie (Descendente)")
                                     funciones.Ordenar("superficie_d");break
                                 else: print("Opcion invalida")
+                        
                         case _: print("\nOpcion invalida");continue
+                    
                     break
+            
             case "4":
                 with open("paises_info_espanol.csv", "r", encoding="utf-8") as archivo:
                     funciones.menu_estadisticas("paises_info_espanol.csv")
