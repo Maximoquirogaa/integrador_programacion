@@ -1,6 +1,5 @@
 import csv, math, unicodedata
 
-
 def quitar_tildes(texto): #Funcion para quitar tildes de los inputs
     texto = unicodedata.normalize('NFD', texto)
     texto = ''.join(c for c in texto if unicodedata.category(c) != 'Mn')
@@ -184,8 +183,8 @@ def menu_estadisticas(lista_paises_csv):
 def cargar_datos_csv(lista_paises_csv):
     lista_paises = []
     try:
-        with open(lista_paises_csv, mode='r', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
+        with open(lista_paises_csv, mode='r', encoding='utf-8') as archivo:
+            lector = csv.DictReader(archivo)
             
             for i, row in enumerate(lector):
                 try:
@@ -301,3 +300,58 @@ def manejar_submenu_filtros(lista_paises):
         elif opcion_filtro == 0:
             print("  Volviendo al menú principal...")
             break # Sale del bucle del submenú y vuelve al principal
+def main():
+    """Función principal que ejecuta el programa."""
+    # Nombre del archivo CSV
+    NOMBRE_ARCHIVO = "paises_info_espanol.csv"
+    
+    # 1. Cargar datos UNA SOLA VEZ al inicio
+    datos_paises = cargar_datos_csv(NOMBRE_ARCHIVO)
+    
+    # Si la carga falló, no continuamos
+    if not datos_paises:
+        print(f"Error fatal: No se pudieron cargar los datos de '{NOMBRE_ARCHIVO}'. Saliendo.")
+        return
+    
+    print(f"¡Bienvenido! Se cargaron {len(datos_paises)} países exitosamente.")
+
+    # 2. Bucle del Menú Principal
+    while True:
+        print("\n--- 🌎 MENÚ PRINCIPAL ---")
+        print("  1. Buscar un país")
+        print("  2. Ordenar lista de países")
+        print("  3. Filtrar países (Submenú)")
+        print("  4. Ver estadísticas (Submenú)")
+        print("  5. Mostrar todos los países cargados")
+        print("  0. Salir")
+        
+        opcion = input("Seleccione una opción (0-5): ")
+        
+        if opcion == '1':
+            busqueda = input("\nIngrese el nombre del país a buscar: ")
+            BusquedaPais(datos_paises, busqueda)
+        
+        elif opcion == '2':
+            opciones = ["nombre", "poblacion", "superficie_a", "superficie_d"]
+            tipo = leer_opcion_valida(f"  Ordenar por ({', '.join(opciones)}): ", opciones)
+            Ordenar(datos_paises, tipo)
+        
+        elif opcion == '3':
+            manejar_submenu_filtros(datos_paises)
+        
+        elif opcion == '4':
+            menu_estadisticas(datos_paises)
+        
+        elif opcion == '5':
+            mostrar_lista_paises(datos_paises, "Lista Completa de Países")
+
+        elif opcion == '0':
+            print("¡Hasta luego!")
+            break
+        
+        else:
+            print("Error: Opción no válida. Por favor, elige un número entre 0 y 5.")
+
+# --- Punto de Entrada ---
+if __name__ == "__main__":
+    main()

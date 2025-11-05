@@ -5,8 +5,8 @@ if __name__=="__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     print("Directorio actual:", os.getcwd())
 
-    lista_paises = funciones.cargar_datos_csv
-    
+    lista_paises = funciones.cargar_datos_csv()
+
     while True:
         opcion=input("""
     Ingrese una opcion: 
