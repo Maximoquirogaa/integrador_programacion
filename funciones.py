@@ -5,7 +5,7 @@ def quitar_tildes(texto): #Funcion para quitar tildes de los inputs
     return texto
 
 
-def BusquedaPais(lista_paises,busqueda):
+def BusquedaPais(busqueda):
     # Prevenimos que no se ingresen números
     if any(c.isdigit() for c in busqueda):
         print("\nPor favor no ingrese números.\n")
@@ -15,12 +15,13 @@ def BusquedaPais(lista_paises,busqueda):
     busqueda_normalizada = quitar_tildes(busqueda.lower())
 
     encontrado = False
-    for linea in lista_paises:
-        linea_normalizada = quitar_tildes(linea.lower()) #Por cada linea en el lista_paises, la normalizamos y metemos en una lista.
-        if busqueda_normalizada in linea_normalizada:
-            partes = linea.strip().split(",")
-            print(f"\nPaís encontrado: {partes[0]}\nPoblación: {partes[1]}\nSuperficie: {partes[2]}\nContinente: {partes[3]}")
-            encontrado = True
+    with open("paises_info_espanol.csv", "r", encoding=("utf-8")) as archivo:
+        for linea in archivo:
+            linea_normalizada = quitar_tildes(linea.lower()) #Por cada linea en el lista_paises, la normalizamos y metemos en una lista.
+            if busqueda_normalizada in linea_normalizada:
+                partes = linea.strip().split(",")
+                print(f"\nPaís encontrado: {partes[0]}\nPoblación: {partes[1]}\nSuperficie: {partes[2]}\nContinente: {partes[3]}")
+                encontrado = True
 
     if not encontrado:
         print("No se encontró ningún país.")
@@ -35,18 +36,18 @@ def Ordenar(tipo):
         parte=2
     paises = []
 
-    
-    for linea in lista_paises:
-        partes = linea.strip().split(",") #Cada linea se convierte en una lista con sus respectivos elementos sin espacios.
-        try:
-            nombre = partes[0]
-            poblacion = int(partes[1]) #Partes[1] corresponde a el valor de poblacion en la lista
-            superficie = int(partes[2]) #Partes[2] corresponde a el valor de superficie en la lista
-            continente = partes[3]
-            paises.append((nombre, poblacion, superficie, continente))
-            
-        except ValueError:
-            print(f"Error con la línea: {linea}")
+    with open("paises_info_espanol.csv", "r", encoding=("utf-8")) as archivo:
+        for linea in archivo:
+            partes = linea.strip().split(",") #Cada linea se convierte en una lista con sus respectivos elementos sin espacios.
+            try:
+                nombre = partes[0]
+                poblacion = int(partes[1]) #Partes[1] corresponde a el valor de poblacion en la lista
+                superficie = int(partes[2]) #Partes[2] corresponde a el valor de superficie en la lista
+                continente = partes[3]
+                paises.append((nombre, poblacion, superficie, continente))
+                
+            except ValueError:
+                print(f"Error con la línea: {linea}")
 
     if tipo=="superficie_d" or tipo=="poblacion":   
         paises_ordenados = sorted(paises, key=lambda x: x[parte], reverse=True)# Ordenar por valor de mayor a menor

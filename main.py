@@ -5,7 +5,8 @@ if __name__=="__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     print("Directorio actual:", os.getcwd())
 
-    lista_paises = funciones.cargar_datos_csv()
+    lista_paises = funciones.cargar_datos_csv("paises_info_espanol.csv")
+
 
     while True:
         opcion=input("""
@@ -25,7 +26,7 @@ if __name__=="__main__":
                     if funciones.BusquedaPais(busqueda)!=0:break
 
             case "2":
-                funciones.manejar_submenu_filtros(listas_paises)
+                funciones.manejar_submenu_filtros(lista_paises)
 
             case "3":
                 while True:
