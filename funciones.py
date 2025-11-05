@@ -184,8 +184,6 @@ def calcular_promedios(datos):
         print("Error: No se puede dividir por cero (no hay datos).")
     except Exception as e:
         print(f"Error al calcular promedios: {e}")
-
-
 def contar_paises_por_continente(datos):
     """Cuenta y muestra cuántos países hay por continente."""
     try:
@@ -203,10 +201,6 @@ def contar_paises_por_continente(datos):
 
 
 def menu_estadisticas(archivo_csv):
-    """
-    Función principal que muestra el menú de estadísticas.
-    Reemplaza a la antigua 'mostrar_estadisticas'.
-    """
     print("\n--- 📊 Módulo de Estadísticas ---")
     
     # 1. Cargar los datos UNA SOLA VEZ
@@ -216,7 +210,6 @@ def menu_estadisticas(archivo_csv):
     if datos is None:
         print("No se pueden mostrar las estadísticas.")
         return
-
     # 2. Bucle del Menú
     while True:
         print("\n¿Qué estadística deseas consultar?")
@@ -245,8 +238,6 @@ def menu_estadisticas(archivo_csv):
             break  # Rompe el bucle while y termina la función
         else:
             print("Error: Opción no válida. Por favor, elige un número entre 1 y 5.")
-
-
 def filtro(filtros_dict):
 
     paises_encontrados = 0
@@ -295,7 +286,6 @@ def filtro(filtros_dict):
                 print(">> No se encontraron países que coincidan con todos los criterios.")
             else:
                 print(f">> Se encontraron y mostraron {paises_encontrados} países.")
-
     except FileNotFoundError:
         print(f"Error CRÍTICO: No se encontró el archivo csv")
     except Exception as e:
