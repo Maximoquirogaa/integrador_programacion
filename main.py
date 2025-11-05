@@ -25,7 +25,7 @@ if __name__=="__main__":
                     if funciones.BusquedaPais(busqueda)!=0:break
 
             case "2":
-                funciones.manejar_submenu_filtros(listar_paises)
+                funciones.manejar_submenu_filtros(listas_paises)
 
             case "3":
                 while True:

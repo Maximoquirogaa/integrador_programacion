@@ -1,5 +1,5 @@
 import csv, math, unicodedata
-
+puto = "santi"
 def quitar_tildes(texto): #Funcion para quitar tildes de los inputs
     texto = unicodedata.normalize('NFD', texto)
     texto = ''.join(c for c in texto if unicodedata.category(c) != 'Mn')
