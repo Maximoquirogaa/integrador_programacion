@@ -17,13 +17,12 @@ def BusquedaPais(busqueda):
     busqueda_normalizada = quitar_tildes(busqueda.lower())
 
     encontrado = False
-    with open("paises_info_espanol.csv", "r", encoding="utf-8") as archivo:
-        for linea in archivo:
-            linea_normalizada = quitar_tildes(linea.lower()) #Por cada linea en el archivo, la normalizamos y metemos en una lista.
-            if busqueda_normalizada in linea_normalizada:
-                partes = linea.strip().split(",")
-                print(f"\nPaís encontrado: {partes[0]}\nPoblación: {partes[1]}\nSuperficie: {partes[2]}\nContinente: {partes[3]}")
-                encontrado = True
+    for linea in lista_paises:
+        linea_normalizada = quitar_tildes(linea.lower()) #Por cada linea en el lista_paises, la normalizamos y metemos en una lista.
+        if busqueda_normalizada in linea_normalizada:
+            partes = linea.strip().split(",")
+            print(f"\nPaís encontrado: {partes[0]}\nPoblación: {partes[1]}\nSuperficie: {partes[2]}\nContinente: {partes[3]}")
+            encontrado = True
 
     if not encontrado:
         print("No se encontró ningún país.")
@@ -38,19 +37,18 @@ def Ordenar(tipo):
         parte=2
     paises = []
 
-    with open("paises_info_espanol.csv", "r", encoding="utf-8") as archivo:
-        next(archivo)  # Saltar encabezado
-        for linea in archivo:
-            partes = linea.strip().split(",") #Cada linea se convierte en una lista con sus respectivos elementos sin espacios.
-            try:
-                nombre = partes[0]
-                poblacion = int(partes[1]) #Partes[1] corresponde a el valor de poblacion en la lista
-                superficie = int(partes[2]) #Partes[2] corresponde a el valor de superficie en la lista
-                continente = partes[3]
-                paises.append((nombre, poblacion, superficie, continente))
+    
+    for linea in lista_paises:
+        partes = linea.strip().split(",") #Cada linea se convierte en una lista con sus respectivos elementos sin espacios.
+        try:
+            nombre = partes[0]
+            poblacion = int(partes[1]) #Partes[1] corresponde a el valor de poblacion en la lista
+            superficie = int(partes[2]) #Partes[2] corresponde a el valor de superficie en la lista
+            continente = partes[3]
+            paises.append((nombre, poblacion, superficie, continente))
             
-            except ValueError:
-                print(f"Error con la línea: {linea}")
+        except ValueError:
+            print(f"Error con la línea: {linea}")
 
     if tipo=="superficie_d" or tipo=="poblacion":   
         paises_ordenados = sorted(paises, key=lambda x: x[parte], reverse=True)# Ordenar por valor de mayor a menor
@@ -60,15 +58,15 @@ def Ordenar(tipo):
     for nombre, poblacion, superficie, continente in paises_ordenados:
         print(f"\n{nombre}: |  Poblacion: {poblacion} | Superficie: {superficie} | Continente: {continente}")
 
-def _leer_datos_estadisticas(archivo_csv):
+def _leer_datos_estadisticas(lista_paises_csv):
     datos_limpios = []
     try:
-        with open(archivo_csv, mode='r', encoding='utf-8', newline='') as f:
+        with open(lista_paises_csv, mode='r', encoding='utf-8', newline='') as f:
             lector = csv.DictReader(f)
 
             if not lector.fieldnames:
-                print(f"Error (Estadísticas): El archivo '{archivo_csv}' está vacío.")
-                return None  # Devuelve None si el archivo está vacío
+                print(f"Error (Estadísticas): El lista_paises '{lista_paises_csv}' está vacío.")
+                return None  # Devuelve None si el lista_paises está vacío
 
             for fila in lector:
                 try:
@@ -90,8 +88,8 @@ def _leer_datos_estadisticas(archivo_csv):
             return datos_limpios
 
     except FileNotFoundError:
-        print(f"Error CRÍTICO: No se encontró el archivo de estadísticas '{archivo_csv}'")
-        return None  # Devuelve None si el archivo no se encuentra
+        print(f"Error CRÍTICO: No se encontró el lista_paises de estadísticas '{lista_paises_csv}'")
+        return None  # Devuelve None si el lista_paises no se encuentra
     except Exception as e:
         print(f"Ocurrió un error inesperado al leer los datos: {e}")
         return None
@@ -145,11 +143,11 @@ def contar_paises_por_continente(datos):
         print(f"Error al contar países por continente: {e}")
 
 
-def menu_estadisticas(archivo_csv):
+def menu_estadisticas(lista_paises_csv):
     print("\n--- 📊 Módulo de Estadísticas ---")
     
     # 1. Cargar los datos UNA SOLA VEZ
-    datos = _leer_datos_estadisticas(archivo_csv)
+    datos = _leer_datos_estadisticas(lista_paises_csv)
     
     # Si la carga de datos falló, no continuamos
     if datos is None:
@@ -183,10 +181,10 @@ def menu_estadisticas(archivo_csv):
             break  # Rompe el bucle while y termina la función
         else:
             print("Error: Opción no válida. Por favor, elige un número entre 1 y 5.")
-def cargar_datos_csv(archivo_csv):
+def cargar_datos_csv(lista_paises_csv):
     lista_paises = []
     try:
-        with open(archivo_csv, mode='r', encoding='utf-8') as file:
+        with open(lista_paises_csv, mode='r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             
             for i, row in enumerate(reader):
@@ -205,9 +203,9 @@ def cargar_datos_csv(archivo_csv):
                     return [] 
                     
     except FileNotFoundError:
-        print(f"Error: Archivo no encontrado. Asegúrese de que '{archivo_csv}' exista.")
+        print(f"Error: lista_paises no encontrado. Asegúrese de que '{lista_paises_csv}' exista.")
     except Exception as e:
-        print(f"Error inesperado al leer el archivo: {e}")
+        print(f"Error inesperado al leer el lista_paises: {e}")
         
     return lista_paises
 def filtrar_por_continente(lista_paises, continente):
