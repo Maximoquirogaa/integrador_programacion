@@ -59,9 +59,7 @@ def Ordenar(tipo):
 
 #Funciones de estadisticas
 def calcular_extremos_poblacion(datos):
-    """Calcula y muestra el país con mayor y menor población."""
     try:
-        # Usamos 'max' y 'min' con una 'key' para encontrar el país (diccionario)
         pais_mayor_pob = max(datos, key=lambda p: p['poblacion'])
         pais_menor_pob = min(datos, key=lambda p: p['poblacion'])
         
@@ -71,7 +69,6 @@ def calcular_extremos_poblacion(datos):
     except Exception as e:
         print(f"Error al calcular extremos de población: {e}")
 def calcular_promedios(datos):
-    """Calcula y muestra los promedios de población y superficie."""
     try:
         total_poblacion = sum(p['poblacion'] for p in datos)
         total_superficie = sum(p['superficie'] for p in datos)
@@ -88,7 +85,6 @@ def calcular_promedios(datos):
     except Exception as e:
         print(f"Error al calcular promedios: {e}")
 def contar_paises_por_continente(datos):
-    """Cuenta y muestra cuántos países hay por continente."""
     try:
         conteo_continentes = {}
         for pais in datos:
@@ -96,22 +92,18 @@ def contar_paises_por_continente(datos):
             conteo_continentes[continente] = conteo_continentes.get(continente, 0) + 1
         
         print("\n--- 🌎 Conteo de Países por Continente ---")
-        # Ordenamos por nombre de continente
+
         for continente, cantidad in sorted(conteo_continentes.items()):
             print(f" - {continente}: {cantidad} países")
     except Exception as e:
         print(f"Error al contar países por continente: {e}")
 def menu_estadisticas(datos): 
-    """
-    Muestra el submenú de estadísticas.
-    Recibe 'datos' (la lista de diccionarios) ya cargados.
-    """
     print("\n--- 📊 Módulo de Estadísticas ---")
 
-    if not datos: # Es más simple que 'if datos is None'
+    if not datos:
         print("No se pueden mostrar las estadísticas (lista vacía).")
         return
-
+    
     while True:
         print("\n¿Qué estadística deseas consultar?")
         print("  1. País con mayor y menor población")
@@ -123,7 +115,6 @@ def menu_estadisticas(datos):
         opcion = input("Elige una opción (1-5): ")
         
         if opcion == '1':
-
             calcular_extremos_poblacion(datos)
         elif opcion == '2':
             calcular_promedios(datos)
@@ -179,11 +170,9 @@ def filtrar_por_continente(lista_paises, continente_input):
             lista_filtrada.append(pais)
     return lista_filtrada
 def filtrar_por_rango_poblacion(lista_paises, min_pob, max_pob):
-    """Filtra países dentro de un rango de población (inclusivo)."""
     return [pais for pais in lista_paises if min_pob <= pais['poblacion'] <= max_pob]
 def filtrar_por_rango_superficie(lista_paises, min_sup, max_sup):
-    
-    """Filtra países dentro de un rango de superficie (inclusivo)."""
+
     return [pais for pais in lista_paises if min_sup <= pais['superficie'] <= max_sup]
 
 #Validaciones y algunos prints
@@ -265,4 +254,4 @@ def manejar_submenu_filtros(lista_paises):
 
         elif opcion_filtro == 0:
             print("  Volviendo al menú principal...")
-            break # Sale del bucle del submenú y vuelve al principal
+            break
