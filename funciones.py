@@ -186,10 +186,10 @@ def menu_estadisticas(archivo_csv):
 def cargar_datos_csv(archivo_csv):
     lista_paises = []
     try:
-        with open(archivo_csv, mode='r', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
+        with open(archivo_csv, mode='r', encoding='utf-8') as archivo:
+            lector = csv.DictReader(archivo)
             
-            for i, row in enumerate(reader):
+            for i, row in enumerate(lector):
                 try:
                     pais = {
                         'nombre': row['nombre'].strip(),
@@ -214,7 +214,6 @@ def filtrar_por_continente(lista_paises, continente):
     """Filtra países por continente (no sensible a mayúsculas)."""
     continente = continente.lower()
     return [pais for pais in lista_paises if pais['continente'].lower() == continente]
-
 
 def filtrar_por_rango_poblacion(lista_paises, min_pob, max_pob):
     """Filtra países dentro de un rango de población (inclusivo)."""
@@ -268,10 +267,39 @@ def mostrar_lista_paises(lista_paises, titulo="Lista de Países"):
     for pais in lista_paises:
         nombre = pais['nombre']
         continente = pais['continente']
-        # Usamos f-strings con formato de comas (,) para miles y alineación (>)
+  
         poblacion = f"{pais['poblacion']:,}"
         superficie = f"{pais['superficie']:,}"
         
         print(f"{nombre:<30} | {continente:<15} | {poblacion:>15} | {superficie:>18}")
 
     print(f"\nTotal: {len(lista_paises)} países mostrados.")
+def manejar_submenu_filtros(lista_paises):
+    while True:
+        print("  1. Filtrar por continente")
+        print("  2. Filtrar por rango de población")
+        print("  3. Filtrar por rango de superficie")
+        print("  0. Volver al menú principal")
+
+        opcion_filtro = leer_entero("  Seleccione una opción de filtro: ", 0, 3)
+
+        if opcion_filtro == 1:
+            continente = input("  Ingrese el nombre del continente: ")
+            filtrados = filtrar_por_continente(lista_paises, continente)
+            mostrar_lista_paises(filtrados, f"Países en {continente}")
+
+        elif opcion_filtro == 2:
+            min_pob = leer_entero("  Ingrese la población mínima: ", 0)
+            max_pob = leer_entero("  Ingrese la población máxima: ", min_pob)
+            filtrados = filtrar_por_rango_poblacion(lista_paises, min_pob, max_pob)
+            mostrar_lista_paises(filtrados, f"Países entre {min_pob} y {max_pob} hab.")
+
+        elif opcion_filtro == 3:
+            min_sup = leer_entero("  Ingrese la superficie mínima (km²): ", 0)
+            max_sup = leer_entero("  Ingrese la superficie máxima (km²): ", min_sup)
+            filtrados = filtrar_por_rango_superficie(lista_paises, min_sup, max_sup)
+            mostrar_lista_paises(filtrados, f"Países entre {min_sup} y {max_sup} km²")
+
+        elif opcion_filtro == 0:
+            print("  Volviendo al menú principal...")
+            break # Sale del bucle del submenú y vuelve al principal
