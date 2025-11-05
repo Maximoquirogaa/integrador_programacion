@@ -1,12 +1,11 @@
 import csv, math, unicodedata
-puto = "santi"
 def quitar_tildes(texto): #Funcion para quitar tildes de los inputs
     texto = unicodedata.normalize('NFD', texto)
     texto = ''.join(c for c in texto if unicodedata.category(c) != 'Mn')
     return texto
 
 
-def BusquedaPais(busqueda):
+def BusquedaPais(lista_paises,busqueda):
     # Prevenimos que no se ingresen números
     if any(c.isdigit() for c in busqueda):
         print("\nPor favor no ingrese números.\n")
@@ -306,14 +305,14 @@ def main():
     NOMBRE_ARCHIVO = "paises_info_espanol.csv"
     
     # 1. Cargar datos UNA SOLA VEZ al inicio
-    datos_paises = cargar_datos_csv(NOMBRE_ARCHIVO)
+    lista_paises = cargar_datos_csv(NOMBRE_ARCHIVO)
     
     # Si la carga falló, no continuamos
-    if not datos_paises:
+    if not lista_paises:
         print(f"Error fatal: No se pudieron cargar los datos de '{NOMBRE_ARCHIVO}'. Saliendo.")
         return
     
-    print(f"¡Bienvenido! Se cargaron {len(datos_paises)} países exitosamente.")
+    print(f"¡Bienvenido! Se cargaron {len(lista_paises)} países exitosamente.")
 
     # 2. Bucle del Menú Principal
     while True:
@@ -329,21 +328,21 @@ def main():
         
         if opcion == '1':
             busqueda = input("\nIngrese el nombre del país a buscar: ")
-            BusquedaPais(datos_paises, busqueda)
+            BusquedaPais(lista_paises,busqueda)
         
         elif opcion == '2':
             opciones = ["nombre", "poblacion", "superficie_a", "superficie_d"]
             tipo = leer_opcion_valida(f"  Ordenar por ({', '.join(opciones)}): ", opciones)
-            Ordenar(datos_paises, tipo)
+            Ordenar(tipo)
         
         elif opcion == '3':
-            manejar_submenu_filtros(datos_paises)
+            manejar_submenu_filtros(lista_paises)
         
         elif opcion == '4':
-            menu_estadisticas(datos_paises)
+            menu_estadisticas(lista_paises)
         
         elif opcion == '5':
-            mostrar_lista_paises(datos_paises, "Lista Completa de Países")
+            mostrar_lista_paises(lista_paises, "Lista Completa de Países")
 
         elif opcion == '0':
             print("¡Hasta luego!")
