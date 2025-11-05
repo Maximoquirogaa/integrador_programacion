@@ -57,42 +57,6 @@ def Ordenar(tipo):
     for nombre, poblacion, superficie, continente in paises_ordenados:
         print(f"\n{nombre}: |  Poblacion: {poblacion} | Superficie: {superficie} | Continente: {continente}")
 
-def _leer_datos_estadisticas(lista_paises_csv):
-    datos_limpios = []
-    try:
-        with open(lista_paises_csv, mode='r', encoding='utf-8', newline='') as f:
-            lector = csv.DictReader(f)
-
-            if not lector.fieldnames:
-                print(f"Error (Estadísticas): El lista_paises '{lista_paises_csv}' está vacío.")
-                return None  # Devuelve None si el lista_paises está vacío
-
-            for fila in lector:
-                try:
-                    # Intenta convertir los datos de esta fila
-                    datos_limpios.append({
-                        "nombre": fila['nombre'],
-                        "poblacion": int(fila['población']),
-                        "superficie": int(fila['superficie']),
-                        "continente": fila['continente']
-                    })
-                except (ValueError, KeyError, TypeError):
-                    # Si una fila tiene datos malos (ej: 'N/A'), la ignora
-                    pass 
-            
-            if not datos_limpios:
-                print("No se encontraron datos válidos para calcular estadísticas.")
-                return None
-
-            return datos_limpios
-
-    except FileNotFoundError:
-        print(f"Error CRÍTICO: No se encontró el lista_paises de estadísticas '{lista_paises_csv}'")
-        return None  # Devuelve None si el lista_paises no se encuentra
-    except Exception as e:
-        print(f"Ocurrió un error inesperado al leer los datos: {e}")
-        return None
-
 
 def calcular_extremos_poblacion(datos):
     """Calcula y muestra el país con mayor y menor población."""
@@ -106,12 +70,9 @@ def calcular_extremos_poblacion(datos):
         print(f"País con Menor Población: {pais_menor_pob['nombre']} ({pais_menor_pob['poblacion']:,.0f})")
     except Exception as e:
         print(f"Error al calcular extremos de población: {e}")
-
-
 def calcular_promedios(datos):
     """Calcula y muestra los promedios de población y superficie."""
     try:
-        # Usamos generadores para sumar las columnas
         total_poblacion = sum(p['poblacion'] for p in datos)
         total_superficie = sum(p['superficie'] for p in datos)
         conteo = len(datos)
@@ -141,18 +102,17 @@ def contar_paises_por_continente(datos):
     except Exception as e:
         print(f"Error al contar países por continente: {e}")
 
-
-def menu_estadisticas(lista_paises_csv):
+def menu_estadisticas(datos): 
+    """
+    Muestra el submenú de estadísticas.
+    Recibe 'datos' (la lista de diccionarios) ya cargados.
+    """
     print("\n--- 📊 Módulo de Estadísticas ---")
-    
-    # 1. Cargar los datos UNA SOLA VEZ
-    datos = _leer_datos_estadisticas(lista_paises_csv)
-    
-    # Si la carga de datos falló, no continuamos
-    if datos is None:
-        print("No se pueden mostrar las estadísticas.")
+
+    if not datos: # Es más simple que 'if datos is None'
+        print("No se pueden mostrar las estadísticas (lista vacía).")
         return
-    # 2. Bucle del Menú
+
     while True:
         print("\n¿Qué estadística deseas consultar?")
         print("  1. País con mayor y menor población")
@@ -164,22 +124,24 @@ def menu_estadisticas(lista_paises_csv):
         opcion = input("Elige una opción (1-5): ")
         
         if opcion == '1':
+
             calcular_extremos_poblacion(datos)
         elif opcion == '2':
             calcular_promedios(datos)
         elif opcion == '3':
             contar_paises_por_continente(datos)
         elif opcion == '4':
-            # Llama a las tres funciones
             print("\n--- Mostrando todas las estadísticas ---")
             calcular_extremos_poblacion(datos)
             calcular_promedios(datos)
             contar_paises_por_continente(datos)
         elif opcion == '5':
             print("Saliendo del módulo de estadísticas...")
-            break  # Rompe el bucle while y termina la función
+            break
         else:
             print("Error: Opción no válida. Por favor, elige un número entre 1 y 5.")
+
+
 def cargar_datos_csv(lista_paises_csv):
     lista_paises = []
     try:
@@ -207,10 +169,16 @@ def cargar_datos_csv(lista_paises_csv):
         print(f"Error inesperado al leer el lista_paises: {e}")
         
     return lista_paises
-def filtrar_por_continente(lista_paises, continente):
-    """Filtra países por continente (no sensible a mayúsculas)."""
-    continente = continente.lower()
-    return [pais for pais in lista_paises if pais['continente'].lower() == continente]
+def filtrar_por_continente(lista_paises, continente_input):
+
+    input_normalizado = quitar_tildes(continente_input.lower())
+    
+    lista_filtrada = []
+    for pais in lista_paises:
+        continente_del_pais_norm = quitar_tildes(pais['continente'].lower())
+        if continente_del_pais_norm == input_normalizado:
+            lista_filtrada.append(pais)
+    return lista_filtrada
 
 def filtrar_por_rango_poblacion(lista_paises, min_pob, max_pob):
     """Filtra países dentro de un rango de población (inclusivo)."""
