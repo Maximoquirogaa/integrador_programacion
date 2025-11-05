@@ -60,61 +60,6 @@ def Ordenar(tipo):
     for nombre, poblacion, superficie, continente in paises_ordenados:
         print(f"\n{nombre}: |  Poblacion: {poblacion} | Superficie: {superficie} | Continente: {continente}")
 
-
-def pedir_numero(mensaje):
-
-    while True:
-        try:
-            valor_str = input(mensaje)
-            valor_int = int(valor_str)
-            return valor_int
-        except ValueError:
-            print("  Error: Ingrese solo números, sin puntos ni comas.")
-
-
-def obtener_filtros_usuario():
-
-    print("--- 1. Configuración de Filtros ---")
-
-    print("\nPASO 1: Continente")
-    while True:
-        continente_input = input("Ingrese el nombre del continente (ej: América): ").strip()
-        if any(c.isdigit() for c in continente_input):
-            print("\nPor favor no ingrese números.\n")
-            continue
-        if continente_input == "":
-            print("\nPor favor ingrese un nombre de continente válido.\n")
-            continue
-        break
-    # Versión para mostrar (capitalizada) y versión normalizada (sin tildes, en minúsculas) para comparar
-    continente_display = continente_input.capitalize()
-    continente_norm = quitar_tildes(continente_input.lower())
-
-    print("\nPASO 2: Rango de Población ")
-    print("A continuación, ingrese el rango de población (solo números).")
-    pob_min = pedir_numero("  Población MÍNIMA (ej: 1000000): ")
-    pob_max = pedir_numero("  Población MÁXIMA (ej: 50000000): ")
-    print(f"Rango de población establecido: {pob_min} a {pob_max}")
-
-    print("\nPASO 3: Rango de Superficie ")
-    print("Ingrese el rango de superficie (en km², solo números).")
-    sup_min = pedir_numero("  Superficie MÍNIMA km² (ej: 100000): ")
-    sup_max = pedir_numero("  Superficie MÁXIMA km² (ej: 5000000): ")
-    print(f"Rango de superficie establecido: {sup_min} km² a {sup_max} km²")
-
-    filtros = {
-        # 'continente' se usa para mostrar al usuario
-        "continente": continente_display,
-        # 'continente_norm' se usa internamente para comparar sin tildes ni mayúsculas
-        "continente_norm": continente_norm,
-        "pob_min": pob_min,
-        "pob_max": pob_max,
-        "sup_min": sup_min,
-        "sup_max": sup_max
-    }
-    return filtros
-
-
 def _leer_datos_estadisticas(archivo_csv):
     datos_limpios = []
     try:
@@ -238,55 +183,95 @@ def menu_estadisticas(archivo_csv):
             break  # Rompe el bucle while y termina la función
         else:
             print("Error: Opción no válida. Por favor, elige un número entre 1 y 5.")
-def filtro(filtros_dict):
-
-    paises_encontrados = 0
-    
-    print(f"\n--- 2. Iniciando búsqueda... ---")
-    print(f"Buscando con los siguientes criterios:")
-    # mostramos la versión para display
-    print(f"  Continente = {filtros_dict['continente']}")
-    print(f"  Población = {filtros_dict['pob_min']} a {filtros_dict['pob_max']}")
-    print(f"  Superficie = {filtros_dict['sup_min']} a {filtros_dict['sup_max']}")
-    print("---------------------------------")
-    
-    print("\n--- Países Encontrados ---")
-        
+def cargar_datos_csv(archivo_csv):
+    lista_paises = []
     try:
-        with open("paises_info_espanol.csv", mode='r', encoding="utf-8", newline='') as archivo_lectura:
+        with open(archivo_csv, mode='r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
             
-            lector_csv = csv.DictReader(archivo_lectura)
-            
-            if not lector_csv.fieldnames:
-                 print(f"Error: El archivo csv está vacío.")
-                 return # Salir de la función
-
-            for fila in lector_csv:
+            for i, row in enumerate(reader):
                 try:
-                    poblacion_int = int(fila['población'])
-                    superficie_int = int(fila['superficie'])
-                    continente_str = fila.get('continente', '').strip()
-                    # normalizamos el continente leído del CSV para comparar
-                    continente_csv_norm = quitar_tildes(continente_str.lower())
-                    # comparamos con la versión normalizada que guardamos en filtros_dict
-                    filtro_continente = (continente_csv_norm == filtros_dict.get('continente_norm', '').lower())
-                    filtro_poblacion = (poblacion_int >= filtros_dict['pob_min']) and (poblacion_int <= filtros_dict['pob_max'])
-                    filtro_superficie = (superficie_int >= filtros_dict['sup_min']) and (superficie_int <= filtros_dict['sup_max'])
-                    if filtro_continente and filtro_poblacion and filtro_superficie:
-                        print(f"  - Nombre: {fila['nombre']}   |   Población: {fila['población']}  |  Superficie: {fila['superficie']}")
-                        paises_encontrados += 1   
-                except (ValueError, KeyError) as e:
-                    nombre_pais = fila.get('nombre', 'DESCONOCIDO')
-                    print(f"Error en fila: Fila ignorada (país: {nombre_pais}). Error: {e}")
-            
-            # --- TERMINÓ EL BUCLE FOR ---
-            print("------------------------------")
-            print(f"\nBúsqueda completada.")
-            if paises_encontrados == 0:
-                print(">> No se encontraron países que coincidan con todos los criterios.")
-            else:
-                print(f">> Se encontraron y mostraron {paises_encontrados} países.")
+                    pais = {
+                        'nombre': row['nombre'].strip(),
+                        'poblacion': int(row['poblacion']),
+                        'superficie': int(row['superficie']),
+                        'continente': row['continente'].strip()
+                    }
+                    lista_paises.append(pais)
+                except ValueError:
+                    print(f"Error de formato en línea {i+2}: '{row}'. Saltando registro.")
+                except KeyError as e:
+                    print(f"Error: Falta la columna {e} en el CSV. Abortando carga.")
+                    return [] 
+                    
     except FileNotFoundError:
-        print(f"Error CRÍTICO: No se encontró el archivo csv")
+        print(f"Error: Archivo no encontrado. Asegúrese de que '{archivo_csv}' exista.")
     except Exception as e:
-        print(f"Ocurrió un error inesperado en el filtrado: {e}")
+        print(f"Error inesperado al leer el archivo: {e}")
+        
+    return lista_paises
+def filtrar_por_continente(lista_paises, continente):
+    """Filtra países por continente (no sensible a mayúsculas)."""
+    continente = continente.lower()
+    return [pais for pais in lista_paises if pais['continente'].lower() == continente]
+
+
+def filtrar_por_rango_poblacion(lista_paises, min_pob, max_pob):
+    """Filtra países dentro de un rango de población (inclusivo)."""
+    return [pais for pais in lista_paises if min_pob <= pais['poblacion'] <= max_pob]
+def filtrar_por_rango_superficie(lista_paises, min_sup, max_sup):
+    
+    """Filtra países dentro de un rango de superficie (inclusivo)."""
+    return [pais for pais in lista_paises if min_sup <= pais['superficie'] <= max_sup]
+
+
+def leer_entero(mensaje, min_val=None, max_val=None):
+    while True:
+        try:
+            entrada = input(mensaje)
+            valor = int(entrada)
+            
+            if min_val is not None and valor < min_val:
+                print(f"Error: El valor debe ser como mínimo {min_val}.")
+                continue
+                
+            if max_val is not None and valor > max_val:
+                print(f"Error: El valor debe ser como máximo {max_val}.")
+                continue
+                
+            return valor
+            
+        except ValueError:
+            print("Error: Debe ingresar un número entero válido.")
+def leer_opcion_valida(mensaje, opciones_validas):
+
+    opciones_validas_lower = [op.lower() for op in opciones_validas]
+    while True:
+        entrada = input(mensaje).lower()
+        if entrada in opciones_validas_lower:
+            return entrada.upper() # Devolvemos en mayúscula para estandarizar
+        else:
+            print(f"Error: Opción no válida. Ingrese una de: {', '.join(opciones_validas)}")
+def mostrar_lista_paises(lista_paises, titulo="Lista de Países"):
+
+    print(f"\n--- {titulo} ---")
+    
+    if not lista_paises:
+        print("No se encontraron países que coincidan con los criterios.")
+        return
+        
+    # Imprimir encabezado
+    print(f"{'Nombre':<30} | {'Continente':<15} | {'Población':>15} | {'Superficie (km²)':>18}")
+    print("-" * 81)
+    
+    # Imprimir filas
+    for pais in lista_paises:
+        nombre = pais['nombre']
+        continente = pais['continente']
+        # Usamos f-strings con formato de comas (,) para miles y alineación (>)
+        poblacion = f"{pais['poblacion']:,}"
+        superficie = f"{pais['superficie']:,}"
+        
+        print(f"{nombre:<30} | {continente:<15} | {poblacion:>15} | {superficie:>18}")
+
+    print(f"\nTotal: {len(lista_paises)} países mostrados.")
