@@ -160,6 +160,15 @@ España,47350000,505990,Europa
 
 ---
 
-📚 **Autores:** Santino Barone, Maximo Quiroga
+## VIDEO TUTORIAL
+
+https://drive.google.com/file/d/1tCSEehTgcm5bC00gH7d3T4Saf0auKb9N/view?usp=sharing
+
+---
+
+
+📚 **Autores:** Santino Barone, Maximo Quiroga 
 
 🕹️ **Ejecución:** `python main.py`
+
+---
