@@ -162,12 +162,13 @@ España,47350000,505990,Europa
 
 ## VIDEO TUTORIAL
 
-https://drive.google.com/file/d/1tCSEehTgcm5bC00gH7d3T4Saf0auKb9N/view?usp=sharing
+https://drive.google.com/file/d/12QG0krHJrNK4xpXgxiKaDZoE2GVXzsud/view?usp=sharing
 
 ---
 
 
-📚 **Autores:** Santino Barone, Maximo Quiroga 
+
+📚 **Autores:** Santino Barone, Maximo Quiroga
 
 🕹️ **Ejecución:** `python main.py`
 
