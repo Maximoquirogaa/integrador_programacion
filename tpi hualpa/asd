@@ -1,8 +1,0 @@
-id,nombre_carrera,duracion_anios,cupos_anuales,modalidad,_archivo_origen
-AR-BA-UBA-ING-SIST-001,Ingenieria en Sistemas,5,200,Presencial,c:\Users\SANTINO\Desktop\tpi hualpa\Argentina\Buenos_Aires\UBA\uba_ingenieria.csv
-AR-BA-UBA-ING-IND-002,Ingenieria Industrial,5,150,Presencial,c:\Users\SANTINO\Desktop\tpi hualpa\Argentina\Buenos_Aires\UBA\uba_ingenieria.csv
-AR-BA-UBA-LIC-FILO-003,Licenciatura en Filosofia,4,80,Presencial,c:\Users\SANTINO\Desktop\tpi hualpa\Argentina\Buenos_Aires\UBA\uba_ingenieria.csv
-AR-BA-UNLP-LIC-MAT-001,Licenciatura en Matematicas,4,60,Presencial,c:\Users\SANTINO\Desktop\tpi hualpa\Argentina\Buenos_Aires\UNLP\unlp_ciencias.csv
-AR-BA-UNLP-FAC-INFO-002,Licenciatura en Informatica,4,120,Presencial,c:\Users\SANTINO\Desktop\tpi hualpa\Argentina\Buenos_Aires\UNLP\unlp_ciencias.csv
-AR-CBA-UNC-MED-001,Medicina,6,180,Presencial,c:\Users\SANTINO\Desktop\tpi hualpa\Argentina\Cordoba\UNC\unc_carreras.csv
-AR-CBA-UNC-ARQ-002,hola,5,70,Presencial,c:\Users\SANTINO\Desktop\tpi hualpa\Argentina\Cordoba\UNC\unc_carreras.csv
