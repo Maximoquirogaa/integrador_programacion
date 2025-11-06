@@ -64,8 +64,7 @@ if __name__=="__main__":
                     break
             
             case "4":
-                with open("paises_info_espanol.csv", "r", encoding="utf-8") as archivo:
-                    funciones.menu_estadisticas("paises_info_espanol.csv")
+                    funciones.menu_estadisticas(lista_paises)
                 
             case "5":
                 print("Saliendo...");break
