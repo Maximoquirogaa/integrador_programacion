@@ -22,8 +22,7 @@ if __name__=="__main__":
             
             case "1":
                 while True:
-                    busqueda=input("Ingrese el pais a buscar: ")
-                    if funciones.BusquedaPais(busqueda)!=0:break
+                    funciones.BusquedaPais(lista_paises)
 
             case "2":
                 funciones.manejar_submenu_filtros(lista_paises)
@@ -39,11 +38,11 @@ if __name__=="__main__":
                     match opcion_m:
                         case "1":
                             print("\nOrdenando por Nombre:")
-                            funciones.Ordenar("nombre");break
+                            funciones.Ordenar(lista_paises,"nombre")
                         
                         case "2":
                             print("Ordenando por Población: ")
-                            funciones.Ordenar("poblacion");break
+                            funciones.Ordenar(lista_paises,"poblacion")
                         
                         case "3":
                             while True:

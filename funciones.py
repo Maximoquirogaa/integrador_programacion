@@ -1,33 +1,20 @@
-import csv, math, unicodedata
-def quitar_tildes(texto): #Funcion para quitar tildes de los inputs
-    texto = unicodedata.normalize('NFD', texto)
-    texto = ''.join(c for c in texto if unicodedata.category(c) != 'Mn')
-    return texto
+import utilidades,csv
 
-
-def BusquedaPais(busqueda):
-    # Prevenimos que no se ingresen números
-    if any(c.isdigit() for c in busqueda):
-        print("\nPor favor no ingrese números.\n")
-        return 0
-
-    # Normalizamos la búsqueda (quitamos tildes y pasamos a minúsculas)
-    busqueda_normalizada = quitar_tildes(busqueda.lower())
+def BusquedaPais(lista_paises):
+    
+    busqueda=utilidades.pedir_string("Ingrese el pais a buscar: ")
 
     encontrado = False
-    with open("paises_info_espanol.csv", "r", encoding=("utf-8")) as archivo:
-        for linea in archivo:
-            linea_normalizada = quitar_tildes(linea.lower()) #Por cada linea en el lista_paises, la normalizamos y metemos en una lista.
-            if busqueda_normalizada in linea_normalizada:
-                partes = linea.strip().split(",")
-                print(f"\nPaís encontrado: {partes[0]}\nPoblación: {partes[1]}\nSuperficie: {partes[2]}\nContinente: {partes[3]}")
-                encontrado = True
-
+    for i in lista_paises:
+        if busqueda in utilidades.quitar_tildes(i["nombre"]).lower():
+            print(f"\nPaís encontrado: {i["nombre"]}\nPoblación: {i["poblacion"]}\nSuperficie: {i["superficie"]}\nContinente: {i["continente"]}")
+            encontrado = True
+            return lista_paises
     if not encontrado:
         print("No se encontró ningún país.")
 
 
-def Ordenar(tipo):
+def Ordenar(lista_paises,tipo):
     if tipo=="nombre":
         parte=0
     elif tipo=="poblacion":
@@ -161,11 +148,11 @@ def cargar_datos_csv(lista_paises_csv):
     return lista_paises
 def filtrar_por_continente(lista_paises, continente_input):
 
-    input_normalizado = quitar_tildes(continente_input.lower())
+    input_normalizado = utilidades.quitar_tildes(continente_input.lower())
     
     lista_filtrada = []
     for pais in lista_paises:
-        continente_del_pais_norm = quitar_tildes(pais['continente'].lower())
+        continente_del_pais_norm = utilidades.quitar_tildes(pais['continente'].lower())
         if continente_del_pais_norm == input_normalizado:
             lista_filtrada.append(pais)
     return lista_filtrada
