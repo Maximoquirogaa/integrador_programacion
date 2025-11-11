@@ -164,6 +164,10 @@ España,47350000,505990,Europa
 
 https://drive.google.com/file/d/12QG0krHJrNK4xpXgxiKaDZoE2GVXzsud/view?usp=sharing
 
+## VIDEO DE LA CORRECCIÓN
+
+https://drive.google.com/file/d/16QPQcw3lEvOEUOfHLfJ_t3zR7xh6mZ8g/view?usp=drive_link
+
 ---
 
 
